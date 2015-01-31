@@ -4,14 +4,16 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 
 
-public class MainActivity extends ActionBarActivity {
+public class Homepage extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.homepage);
     }
 
 
@@ -36,4 +38,17 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void createGroup(View v){
+        EditText groupName = (EditText)findViewById(R.id.groupName);
+        String str = groupName.getText().toString();
+        System.out.println("creating group " + str);
+    }
+
+    public void joinGroup(View v){
+        EditText groupName = (EditText)findViewById(R.id.groupName);
+        String str = groupName.getText().toString().trim();
+        System.out.println("joining group " + str);
+    }
+
 }
