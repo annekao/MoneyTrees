@@ -65,10 +65,10 @@ public class Main extends ActionBarActivity {
        // MoneyGroup mg = new MoneyGroup(groupName);
         User u = new User(name, pNum);
         u.setAdmin(true);
-n
+
         //adding to Firebase
         Firebase groupsRef = myFirebaseRef.child("groups");
-        Map<String, Mo>
+       // Map<String, Mo>
     }
 
     public void joinGroup(View v){
