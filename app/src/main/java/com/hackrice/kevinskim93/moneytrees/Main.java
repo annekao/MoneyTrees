@@ -7,14 +7,24 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
+import com.firebase.client.Firebase;
+
 
 public class Main extends ActionBarActivity {
+
+    Firebase myFirebaseRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Firebase.setAndroidContext(this);
+        myFirebaseRef = new Firebase("https://luminous-inferno-581.firebaseio.com/");
         setContentView(R.layout.homepage);
     }
+
+
+
+
 
 
     @Override
@@ -42,6 +52,12 @@ public class Main extends ActionBarActivity {
     public void createGroup(View v){
         EditText groupName = (EditText)findViewById(R.id.groupName);
         String str = groupName.getText().toString();
+
+        //if group already exists, return error
+
+        //create group
+        Group
+
         System.out.println("creating group " + str);
     }
 
@@ -49,6 +65,9 @@ public class Main extends ActionBarActivity {
         EditText groupName = (EditText)findViewById(R.id.groupName);
         String str = groupName.getText().toString().trim();
         System.out.println("joining group " + str);
+
+        //if group doesn't exist, or wrong password, return error
+
         setContentView(R.layout.activity);
     }
 
