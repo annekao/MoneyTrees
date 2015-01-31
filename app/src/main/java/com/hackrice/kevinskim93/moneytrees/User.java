@@ -8,10 +8,17 @@ public class User {
     private boolean admin;
     private String phone;
 
-    public User(String n){
+    public User(String n, String p){
         name = n;
+        phone = p;
         money = 0;
+        admin = false;
+    }
 
+    public void setAdmin(boolean b){
+        //admins have the ability to "balance" the transactions
+        //all other users can only submit their personal transactions for the group
+        admin = b;
     }
 
     public double getMoney(){

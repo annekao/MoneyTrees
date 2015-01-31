@@ -50,15 +50,25 @@ public class Main extends ActionBarActivity {
     }
 
     public void createGroup(View v){
-        EditText groupName = (EditText)findViewById(R.id.groupName);
-        String str = groupName.getText().toString();
+        EditText nameText = (EditText)findViewById(R.id.name);
+        String name = nameText.getText().toString();
+
+        EditText pNumText = (EditText)findViewById(R.id.phoneNumber);
+        String pNum = pNumText.getText().toString();
+
+        EditText groupText = (EditText)findViewById(R.id.groupName);
+        String groupName = groupText.getText().toString();
 
         //if group already exists, return error
 
         //create group
-        Group
-
-        System.out.println("creating group " + str);
+       // MoneyGroup mg = new MoneyGroup(groupName);
+        User u = new User(name, pNum);
+        u.setAdmin(true);
+n
+        //adding to Firebase
+        Firebase groupsRef = myFirebaseRef.child("groups");
+        Map<String, Mo>
     }
 
     public void joinGroup(View v){
