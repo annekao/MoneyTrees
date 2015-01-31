@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.EditText;
 
 
-public class Homepage extends ActionBarActivity {
+public class Main extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +49,7 @@ public class Homepage extends ActionBarActivity {
         EditText groupName = (EditText)findViewById(R.id.groupName);
         String str = groupName.getText().toString().trim();
         System.out.println("joining group " + str);
+        setContentView(R.layout.activity);
     }
 
 }
