@@ -1,4 +1,4 @@
-package com.example.kevinskim93.moneytrees;
+package com.hackrice.kevinskim93.moneytrees;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

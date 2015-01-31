@@ -1,4 +1,4 @@
-package com.example.kevinskim93.moneytrees;
+package com.hackrice.kevinskim93.moneytrees;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
