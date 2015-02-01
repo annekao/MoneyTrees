@@ -13,13 +13,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
 import java.util.*;
 
 public class Main extends Activity {
 
     Firebase myFirebaseRef;
+    String groupName;
+    Map<String, MoneyGroup> groups = new HashMap<String, MoneyGroup>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +69,9 @@ public class Main extends Activity {
         String pNum = pNumText.getText().toString();
 
         EditText groupText = (EditText)findViewById(R.id.groupName);
-        String groupName = groupText.getText().toString();
+        groupName = groupText.getText().toString();
 
-        setContentView(R.layout.create_password);
+        //setContentView(R.layout.create_password);
 
         //if group already exists, return error
 
@@ -74,22 +79,30 @@ public class Main extends Activity {
         MoneyGroup mg = new MoneyGroup(groupName);
         User u = new User(name, pNum);
         u.setAdmin(true);
-
         mg.addUser(u);
 
         //adding to Firebase
         Firebase groupsRef = myFirebaseRef.child("groups");
-        Map<String, MoneyGroup> groups = new HashMap<String, MoneyGroup>();
+        groupsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                groups = (Map<String, MoneyGroup>) snapshot.getValue();
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                System.out.println("The read failed: " + firebaseError.getMessage());
+            }
+        });
 
         groups.put(groupName, mg);
-
-        groupsRef.push().setValue(groups);
+        groupsRef.setValue(groups);
     }
 
     public void joinGroup(View v){
-        EditText groupName = (EditText)findViewById(R.id.groupName);
-        String str = groupName.getText().toString().trim();
-        System.out.println("joining group " + str);
+        EditText groupText = (EditText)findViewById(R.id.groupName);
+        groupName = groupText.getText().toString().trim();
+        System.out.println("joining group " + groupName);
 
         //if group doesn't exist, or wrong password, return error
 
@@ -97,6 +110,19 @@ public class Main extends Activity {
     }
 
     public void enterPassword(View v){
+        myFirebaseRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+
+                System.out.println(snapshot.getValue().getClass());
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                System.out.println("The read failed: " + firebaseError.getMessage());
+            }
+        });
+
         EditText userInput = (EditText)findViewById(R.id.password);
 
         if (userInput.getText().toString().equals("pw"))
