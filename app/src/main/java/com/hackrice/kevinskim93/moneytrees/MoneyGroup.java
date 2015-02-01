@@ -7,11 +7,13 @@ public class MoneyGroup {
     private String name;
     private double money;
     private ArrayList<User> users;
+    private String password;
 
     public MoneyGroup(String n){
         name = n;
         money = 0;
         users = new ArrayList<User>();
+        password = "";
 
     }
 
@@ -31,6 +33,14 @@ public class MoneyGroup {
 
     public ArrayList<User> getUsers(){
         return users;
+    }
+
+    public void setPassword(String pw){
+        password = pw;
+    }
+
+    public String getPassword(){
+        return password;
     }
 
 }
