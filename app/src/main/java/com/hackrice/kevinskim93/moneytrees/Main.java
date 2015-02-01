@@ -1,7 +1,13 @@
 package com.hackrice.kevinskim93.moneytrees;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,7 +17,7 @@ import com.firebase.client.Firebase;
 
 import java.util.*;
 
-public class Main extends ActionBarActivity {
+public class Main extends Activity {
 
     Firebase myFirebaseRef;
 
@@ -85,7 +91,69 @@ public class Main extends ActionBarActivity {
 
         //if group doesn't exist, or wrong password, return error
 
-        setContentView(R.layout.activity);
+        promptPassword();
     }
+
+    public void promptPassword() {
+        final Activity context = this;
+        LayoutInflater li = LayoutInflater.from(context);
+        View promptsView = li.inflate(R.layout.enter_password, null);
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setView(promptsView);
+
+        final EditText userInput = (EditText) promptsView
+                .findViewById(R.id.password);
+
+
+        // set dialog message
+        alertDialogBuilder
+                .setCancelable(false)
+                .setNegativeButton("Continue",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                String user_text = (userInput.getText()).toString();
+
+                                /** CHECK FOR USER'S INPUT **/
+                                if (user_text.equals("oeg"))
+                                {
+                                    Log.d(user_text, "HELLO THIS IS THE MESSAGE CAUGHT :)");
+                                    //Search_Tips(user_text);
+
+                                }
+                                else{
+                                    Log.d(user_text, "string is empty");
+                                    String message = "The password you have entered is incorrect." + " \n \n" + "Please try again!";
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                                    builder.setTitle("Error");
+                                    builder.setMessage(message);
+                                    builder.setPositiveButton("Cancel", null);
+                                    builder.setNegativeButton("Retry", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            promptPassword();
+                                        }
+                                    });
+                                    builder.create().show();
+
+                                }
+                            }
+                        })
+                .setPositiveButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                dialog.dismiss();
+                            }
+
+                        }
+
+                );
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+    }
+
 
 }
