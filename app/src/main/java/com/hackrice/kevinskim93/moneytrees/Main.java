@@ -22,12 +22,14 @@ import java.util.*;
 
 public class Main extends Activity {
 
+    Main m;
     Firebase myFirebaseRef;
     String name, pNum, groupName;
     Map<String, MoneyGroup> groups = new HashMap<String, MoneyGroup>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        m = this;
         super.onCreate(savedInstanceState);
         Firebase.setAndroidContext(this);
         myFirebaseRef = new Firebase("https://luminous-inferno-581.firebaseio.com/");
@@ -67,6 +69,8 @@ public class Main extends Activity {
         EditText groupText = (EditText) findViewById(R.id.groupName);
         groupName = groupText.getText().toString();
 
+
+
         setContentView(R.layout.create_password);
 
         //if group already exists, return error
@@ -85,10 +89,55 @@ public class Main extends Activity {
     }
 
     public void enterPassword(View v) {
-        myFirebaseRef.addValueEventListener(new ValueEventListener() {
+        Firebase groupsRef = myFirebaseRef.child("groups");
+        groupsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 groups = (HashMap<String, MoneyGroup>) snapshot.getValue();
+                System.out.println("YOU ARE NOW ENTERING YOUR PASSWORD");
+                System.out.println("THE SIZE OF GROUPS IS " + groups.size());
+
+                //test
+                MoneyGroup moneyGroup =  groups.get(groupName);
+
+                if (moneyGroup == null){
+                    String message = "The group you have entered does not exist." + " \n \n" + "Please try again!";
+                    AlertDialog.Builder builder = new AlertDialog.Builder(m);
+                    builder.setTitle("Error");
+                    builder.setMessage(message);
+                    builder.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                            setContentView(R.layout.homepage);
+                        }
+                    });
+                    builder.create().show();
+                }
+                else {
+                    String actualPW = moneyGroup.getPassword();
+                    EditText userInput = (EditText) findViewById(R.id.password);
+                    String userPW = userInput.getText().toString();
+
+                    if (actualPW.equals(userPW)) {
+                        System.out.println(actualPW);
+                        // TODO: add user
+                    } else {
+                        System.out.println(userInput.getText().toString());
+                        String message = "The password you have entered is incorrect." + " \n \n" + "Please try again!";
+                        AlertDialog.Builder builder = new AlertDialog.Builder(m);
+                        builder.setTitle("Error");
+                        builder.setMessage(message);
+                        builder.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                setContentView(R.layout.homepage);
+                            }
+                        });
+                        builder.setNegativeButton("Retry", null);
+                        builder.create().show();
+                    }
+                }
+
             }
 
             @Override
@@ -96,42 +145,10 @@ public class Main extends Activity {
                 System.out.println("The read failed: " + firebaseError.getMessage());
             }
         });
-        MoneyGroup moneyGroup = groups.get(groupName);
-        if (moneyGroup == null){
-            String message = "The group you have entered does not exist." + " \n \n" + "Please try again!";
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Error");
-            builder.setMessage(message);
-            builder.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int id) {
-                    setContentView(R.layout.homepage);
-                }
-            });
-            builder.create().show();
-        }
-        String actualPW = moneyGroup.getPassword();
-        EditText userInput = (EditText) findViewById(R.id.password);
-        String userPW = userInput.getText().toString();
+        System.out.println(groupName);
+        System.out.println("groupsize is " + groups.size());
 
-        if (actualPW.equals(userPW)) {
-            System.out.println(actualPW);
-            // TODO: add user
-        } else {
-            System.out.println(userInput.getText().toString());
-            String message = "The password you have entered is incorrect." + " \n \n" + "Please try again!";
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Error");
-            builder.setMessage(message);
-            builder.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int id) {
-                    setContentView(R.layout.homepage);
-                }
-            });
-            builder.setNegativeButton("Retry", null);
-            builder.create().show();
-        }
+
     }
 
     public void createPassword(View v) {

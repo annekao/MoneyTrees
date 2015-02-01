@@ -40,7 +40,7 @@ public class MoneyGroup {
     }
 
     public String getPassword(){
-        return "hi";
+        return password;
     }
 
 }
