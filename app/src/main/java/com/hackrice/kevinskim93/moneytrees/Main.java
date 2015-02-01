@@ -453,7 +453,13 @@ public class Main extends Activity {
             while(!oweMoneyUsers.isEmpty()){
 
                 User owe = oweMoneyUsers.peek();
+
+                System.out.println("Owes money is " + owe.getMoney());
+
                 User need = needMoneyUsers.peek();
+
+                System.out.println("Needs money is " + need.getMoney());
+
                 while(owe.getMoney() < 0){
 
                     if(Math.abs(owe.getMoney()) > need.getMoney()){
@@ -463,6 +469,7 @@ public class Main extends Activity {
                         need.setMoney(0);
                         needMoneyUsers.pop();
                         need = needMoneyUsers.peek();
+                        System.out.println("Needs money is " + need.getMoney());
 
                     }
                     else{
