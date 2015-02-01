@@ -66,6 +66,8 @@ public class Main extends Activity {
         EditText groupText = (EditText)findViewById(R.id.groupName);
         String groupName = groupText.getText().toString();
 
+        setContentView(R.layout.create_password);
+
         //if group already exists, return error
 
         //create group
@@ -82,8 +84,6 @@ public class Main extends Activity {
         groups.put(groupName, mg);
 
         groupsRef.setValue(groups);
-
-        promptPassword(true);
     }
 
     public void joinGroup(View v){
@@ -93,19 +93,46 @@ public class Main extends Activity {
 
         //if group doesn't exist, or wrong password, return error
 
-        promptPassword(false);
+        setContentView(R.layout.enter_password);
     }
 
-    public void promptPassword(boolean create) {
+    public void enterPassword(View v){
+        EditText userInput = (EditText)findViewById(R.id.password);
+
+        if (userInput.getText().toString().equals("pw"))
+        {
+            System.out.println(userInput.getText().toString());
+        }
+        else {
+            System.out.println(userInput.getText().toString());
+            String message = "The password you have entered is incorrect." + " \n \n" + "Please try again!";
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Error");
+            builder.setMessage(message);
+            builder.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int id) {
+                    setContentView(R.layout.homepage);
+                }
+            });
+            builder.setNegativeButton("Retry", null);
+            builder.create().show();
+        }
+    }
+/*
+    public void createPassword() {
         final Activity context = this;
         LayoutInflater li = LayoutInflater.from(context);
-        View promptsView = li.inflate(R.layout.enter_password, null);
+        View promptsView = li.inflate(R.layout.create_password, null);
+
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setView(promptsView);
 
         final EditText userInput = (EditText) promptsView
                 .findViewById(R.id.password);
 
+        final EditText userConf = (EditText) promptsView
+                .findViewById(R.id.confPassword);
 
         // set dialog message
         alertDialogBuilder
@@ -115,16 +142,14 @@ public class Main extends Activity {
                             public void onClick(DialogInterface dialog,int id) {
                                 String user_text = (userInput.getText()).toString();
 
-                                /** CHECK FOR USER'S INPUT **/
-                                if (user_text.equals("oeg"))
+                                /** CHECK FOR USER'S INPUT
+                                if (userConf.equals(userInput))
                                 {
-                                    Log.d(user_text, "HELLO THIS IS THE MESSAGE CAUGHT :)");
-                                    //Search_Tips(user_text);
-
+                                    Log.d(user_text, "Correct password");
                                 }
-                                else{
-                                    Log.d(user_text, "string is empty");
-                                    String message = "The password you have entered is incorrect." + " \n \n" + "Please try again!";
+                                else {
+                                    Log.d(user_text, "passwords mismatch");
+                                    String message = "The passwords do not match." + " \n \n" + "Please try again!";
                                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                                     builder.setTitle("Error");
                                     builder.setMessage(message);
@@ -132,7 +157,7 @@ public class Main extends Activity {
                                     builder.setNegativeButton("Retry", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int id) {
-                                            promptPassword();
+                                            createPassword();
                                         }
                                     });
                                     builder.create().show();
@@ -157,5 +182,5 @@ public class Main extends Activity {
         alertDialog.show();
     }
 
-
+*/
 }
