@@ -83,7 +83,7 @@ public class Main extends Activity {
 
         groups.put(groupName, mg);
 
-        groupsRef.setValue(groups);
+        groupsRef.push().setValue(groups);
     }
 
     public void joinGroup(View v){
