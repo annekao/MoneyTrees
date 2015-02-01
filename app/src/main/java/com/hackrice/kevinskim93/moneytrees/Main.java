@@ -159,6 +159,7 @@ public class Main extends Activity {
 
         if (actualPW.equals(userPW)) {
             User u = new User(name, pNum);
+
             System.out.println("JOINED");
             //moneyGroup.addUser(u);
         }
