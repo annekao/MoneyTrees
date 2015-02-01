@@ -160,7 +160,29 @@ public class Main extends Activity {
         if (actualPW.equals(userPW)) {
             User u = new User(name, pNum);
             System.out.println("JOINED");
-            //moneyGroup.addUser(u);
+
+            final ArrayList<Object> userList = (ArrayList<Object>) tempMap.get("users");
+
+            userList.add(u);
+
+
+            groupsRef = myFirebaseRef.child("groups");
+            groupsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+
+                    ((Map<String, Object>) groups).put("users", ((Object) userList));
+                    groupsRef.setValue(groups);
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+                    System.out.println("The read failed: " + firebaseError.getMessage());
+                }
+            });
+
+
+
         }
         else {
             System.out.println(userInput.getText().toString());
