@@ -333,17 +333,28 @@ public class Main extends Activity {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
 
-                ((Map<String, Object>) groups).put("users", ((Object) userList));
+
 
                 //((Map<String, Object>) groups).put("money", ((Object) billDouble).toString());
                 MoneyGroup mg = null;
 
                 if(!isNewUser) {
+                    Map<String, Object> tempMap = (Map<String,Object>)((Map<String, Object>) groups);
+                    //Map<String, Object> temporaryMap = (Map<String,Object>)((Map<String, Object>) tempMap.get(groupName));
+                    mg = (MoneyGroup) ((Map<String, Object>) groups).get(groupName);
+
+                    List<User> usersListMap = (List<User>)mg.getUsers();
+
+                    System.out.println(usersListMap.size());
+
+                    ((Map<String, Object>) groups).put("users", usersListMap);
+
                     mg = (MoneyGroup) ((Map<String, Object>) groups).get(groupName);
                     mg.addMoney( billDouble );
                 }
                 else{
 
+                    ((Map<String, Object>) groups).put("users", ((Object) userList));
                     Object tempMoneyMap = ((Map<String, Object>)groups).get(groupName);
                     Double money = (Double) ((Map<String, Object>) tempMoneyMap).get("money");
                     ((Map<String, Object>) tempMoneyMap).put("money", (Object) (money + billDouble));
@@ -366,8 +377,104 @@ public class Main extends Activity {
     public void balance(View v){
         //compiles list of who to pay with option to venmo
 
-        
+        System.out.println(groupName);
+
+        groupsRef = myFirebaseRef.child("groups");
+        groupsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                groups = (Map<String, Object>) snapshot.getValue();
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                System.out.println("The read failed: " + firebaseError.getMessage());
+            }
+        });
+
+        Map<String, String> temp = new HashMap<String, String>();
+        Firebase tempRef = myFirebaseRef.child("temp");
+        tempRef.setValue(temp);
 
 
+        Map<String, Object> tempMap = (Map<String,Object>)((Map<String, Object>) groups);
+
+        Object moneyGroupMap = tempMap.get(groupName);
+
+        //money group
+        if(moneyGroupMap instanceof MoneyGroup){
+
+
+        }
+
+        //not money group
+        else{
+
+            ArrayList<Object> usersListMap = (ArrayList<Object>)((Map<String, Object>) moneyGroupMap).get("users");
+
+            double disbursement = 0;
+            for(Object u : usersListMap){
+                //u is a map, use its data
+
+                Double money = (Double)((Map<String, Object>)u).get("money");
+
+                disbursement += money;
+            }
+
+            disbursement = disbursement / usersListMap.size();
+
+            System.out.println(disbursement);
+
+            Stack<User> oweMoneyUsers = new Stack<User>();
+            Stack<User> needMoneyUsers = new Stack<User>();
+
+            for(Object u : usersListMap){
+
+                User user = new User((String)((Map<String, Object>)u).get("name"),
+                                     (String)((Map<String, Object>)u).get("number") );
+                user.setMoney((Double)((Map<String, Object>)u).get("money"));
+
+                user.addMoney(-disbursement);
+
+                if(user.getMoney() < 0){
+
+                   oweMoneyUsers.push(user);
+
+                }
+                else if (user.getMoney() > 0){
+
+                   needMoneyUsers.push(user);
+
+
+                }
+            }
+
+
+            while(!oweMoneyUsers.isEmpty()){
+
+                User owe = oweMoneyUsers.peek();
+                User need = needMoneyUsers.peek();
+                while(owe.getMoney() < 0){
+
+                    if(Math.abs(owe.getMoney()) > need.getMoney()){
+                        //owe pays all of need's balance, but still has some over
+
+                        owe.addMoney(need.getMoney());
+                        need.setMoney(0);
+                        needMoneyUsers.pop();
+                        need = needMoneyUsers.peek();
+
+                    }
+                    else{
+                        //owe is fully out of debt, go to the next need money user
+
+                        need.addMoney(owe.getMoney());
+                        owe.setMoney(0);
+                    }
+                }
+
+                oweMoneyUsers.pop();
+            }
+        }
     }
 }

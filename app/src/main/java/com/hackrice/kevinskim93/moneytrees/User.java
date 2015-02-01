@@ -26,6 +26,10 @@ public class User {
         phone = s;
     }
 
+    public void setMoney(double m){
+        money = m;
+    }
+
     public String getNumber(){
         return phone;
     }
