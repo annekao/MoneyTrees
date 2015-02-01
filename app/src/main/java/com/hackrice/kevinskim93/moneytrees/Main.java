@@ -21,15 +21,12 @@ import com.firebase.client.ValueEventListener;
 import java.util.*;
 
 public class Main extends Activity {
-
-    Main m;
     Firebase myFirebaseRef;
     String name, pNum, groupName;
-    Map<String, MoneyGroup> groups = new HashMap<String, MoneyGroup>();
+    HashMap<String, MoneyGroup> groups = new HashMap<String, MoneyGroup>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        m = this;
         super.onCreate(savedInstanceState);
         Firebase.setAndroidContext(this);
         myFirebaseRef = new Firebase("https://luminous-inferno-581.firebaseio.com/");
@@ -79,65 +76,22 @@ public class Main extends Activity {
     }
 
     public void joinGroup(View v) {
+        EditText nameText = (EditText) findViewById(R.id.name);
+        name = nameText.getText().toString();
+
+        EditText pNumText = (EditText) findViewById(R.id.phoneNumber);
+        pNum = pNumText.getText().toString();
+
         EditText groupText = (EditText) findViewById(R.id.groupName);
         groupName = groupText.getText().toString().trim();
         System.out.println("joining group " + groupName);
 
         //if group doesn't exist, or wrong password, return error
-
-        setContentView(R.layout.enter_password);
-    }
-
-    public void enterPassword(View v) {
         Firebase groupsRef = myFirebaseRef.child("groups");
-        groupsRef.addValueEventListener(new ValueEventListener() {
+        groupsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 groups = (HashMap<String, MoneyGroup>) snapshot.getValue();
-                System.out.println("YOU ARE NOW ENTERING YOUR PASSWORD");
-                System.out.println("THE SIZE OF GROUPS IS " + groups.size());
-
-                //test
-                MoneyGroup moneyGroup =  groups.get(groupName);
-
-                if (moneyGroup == null){
-                    String message = "The group you have entered does not exist." + " \n \n" + "Please try again!";
-                    AlertDialog.Builder builder = new AlertDialog.Builder(m);
-                    builder.setTitle("Error");
-                    builder.setMessage(message);
-                    builder.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int id) {
-                            setContentView(R.layout.homepage);
-                        }
-                    });
-                    builder.create().show();
-                }
-                else {
-                    String actualPW = moneyGroup.getPassword();
-                    EditText userInput = (EditText) findViewById(R.id.password);
-                    String userPW = userInput.getText().toString();
-
-                    if (actualPW.equals(userPW)) {
-                        System.out.println(actualPW);
-                        // TODO: add user
-                    } else {
-                        System.out.println(userInput.getText().toString());
-                        String message = "The password you have entered is incorrect." + " \n \n" + "Please try again!";
-                        AlertDialog.Builder builder = new AlertDialog.Builder(m);
-                        builder.setTitle("Error");
-                        builder.setMessage(message);
-                        builder.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                setContentView(R.layout.homepage);
-                            }
-                        });
-                        builder.setNegativeButton("Retry", null);
-                        builder.create().show();
-                    }
-                }
-
             }
 
             @Override
@@ -145,10 +99,53 @@ public class Main extends Activity {
                 System.out.println("The read failed: " + firebaseError.getMessage());
             }
         });
-        System.out.println(groupName);
-        System.out.println("groupsize is " + groups.size());
 
+        if (!groups.containsKey(groupName)){
+            String message = "The group you have entered does not exist." + " \n \n" + "Please try again!";
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Error");
+            builder.setMessage(message);
+            builder.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int id) {
+                    setContentView(R.layout.homepage);
+                }
+            });
+            builder.create().show();
+        }
+        setContentView(R.layout.enter_password);
+    }
 
+    public void enterPassword(View v) {
+        MoneyGroup moneyGroup =  groups.get(groupName);
+
+        String actualPW = moneyGroup.getPassword();
+        EditText userInput = (EditText) findViewById(R.id.password);
+        String userPW = userInput.getText().toString();
+
+        if (actualPW.equals(userPW)) {
+            User u = new User(name, pNum);
+            moneyGroup.addUser(u);
+        }
+        else {
+            System.out.println(userInput.getText().toString());
+            String message = "The password you have entered is incorrect." + " \n \n" + "Please try again!";
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Error");
+            builder.setMessage(message);
+            builder.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int id) {
+                    setContentView(R.layout.homepage);
+                }
+            });
+            builder.setNegativeButton("Retry", null);
+            builder.create().show();
+        }
+
+        groups.put(groupName, moneyGroup);
+        Firebase groupsRef = myFirebaseRef.child("groups");
+        groupsRef.setValue(groups);
     }
 
     public void createPassword(View v) {
@@ -158,7 +155,8 @@ public class Main extends Activity {
         if (userInput.getText().toString().equals(confUserInput.getText().toString())) {
             groupPW = userInput.getText().toString();
             addToDB(groupPW);
-        } else {
+        }
+        else {
             System.out.println(userInput.getText().toString());
             String message = "The password you've entered do not match." + " \n \n" + "Please try again!";
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -185,10 +183,10 @@ public class Main extends Activity {
 
         //adding to Firebase
         Firebase groupsRef = myFirebaseRef.child("groups");
-        groupsRef.addValueEventListener(new ValueEventListener() {
+        groupsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                groups = (Map<String, MoneyGroup>) snapshot.getValue();
+                groups = (HashMap<String, MoneyGroup>) snapshot.getValue();
             }
 
             @Override
