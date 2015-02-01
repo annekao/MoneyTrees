@@ -5,7 +5,7 @@
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="463dp"
+        android:layout_height="425dp"
         android:id="@+id/listView"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="0dp"
@@ -17,11 +17,10 @@
         android:layout_height="wrap_content"
         android:text="Add Payment"
         android:id="@+id/add"
-        android:layout_marginRight="81dp"
-        android:layout_marginEnd="81dp"
+        android:layout_marginTop="36dp"
         android:layout_below="@+id/listView"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_toRightOf="@+id/amountPaid"
+        android:layout_toEndOf="@+id/amountPaid" />
 
     <EditText
         android:layout_width="75dp"
@@ -30,8 +29,10 @@
         android:ems="10"
         android:id="@+id/amountPaid"
         android:layout_alignBottom="@+id/add"
-        android:layout_toLeftOf="@+id/add"
-        android:text="00.00" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="89dp"
+        android:layout_marginStart="89dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -39,9 +40,11 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="$"
         android:id="@+id/textView4"
-        android:layout_alignBottom="@+id/amountPaid"
-        android:layout_toLeftOf="@+id/amountPaid"
-        android:layout_toStartOf="@+id/amountPaid"
-        android:layout_alignTop="@+id/amountPaid" />
+        android:layout_marginLeft="74dp"
+        android:layout_marginStart="74dp"
+        android:layout_alignTop="@+id/amountPaid"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
 
 </RelativeLayout>

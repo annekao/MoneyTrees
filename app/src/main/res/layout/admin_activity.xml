@@ -5,7 +5,7 @@
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="463dp"
+        android:layout_height="425dp"
         android:id="@+id/listView"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="0dp"
@@ -17,11 +17,11 @@
         android:layout_height="wrap_content"
         android:text="Add Payment"
         android:id="@+id/add"
-        android:layout_marginRight="81dp"
-        android:layout_marginEnd="81dp"
-        android:layout_below="@+id/listView"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_marginLeft="41dp"
+        android:layout_marginStart="41dp"
+        android:layout_above="@+id/balance"
+        android:layout_alignLeft="@+id/balance"
+        android:layout_alignStart="@+id/balance" />
 
     <EditText
         android:layout_width="75dp"
@@ -29,9 +29,11 @@
         android:inputType="numberDecimal"
         android:ems="10"
         android:id="@+id/amountPaid"
-        android:layout_alignBottom="@+id/add"
-        android:layout_toLeftOf="@+id/add"
-        android:text="00.00" />
+        android:layout_marginRight="47dp"
+        android:layout_marginEnd="47dp"
+        android:layout_below="@+id/listView"
+        android:layout_alignRight="@+id/balance"
+        android:layout_alignEnd="@+id/balance" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -49,7 +51,7 @@
         android:layout_height="wrap_content"
         android:text="Balance"
         android:id="@+id/balance"
-        android:layout_below="@+id/add"
+        android:layout_below="@+id/amountPaid"
         android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

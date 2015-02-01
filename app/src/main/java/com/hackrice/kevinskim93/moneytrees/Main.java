@@ -200,7 +200,7 @@ public class Main extends Activity {
             builder.setNegativeButton("Retry", null);
             builder.create().show();
         }
-
+        setContentView(R.layout.activity);
         /*groups.put(groupName, moneyGroup);
         Firebase groupsRef = myFirebaseRef.child("groups");
         groupsRef.setValue(groups);*/
@@ -260,6 +260,8 @@ public class Main extends Activity {
         Map<String, String> temp = new HashMap<String, String>();
         Firebase tempRef = myFirebaseRef.child("temp");
         tempRef.setValue(temp);
+
+        setContentView(R.layout.admin_activity);
 
 
     }
