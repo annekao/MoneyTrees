@@ -82,6 +82,8 @@ public class Main extends Activity {
         groups.put(groupName, mg);
 
         groupsRef.setValue(groups);
+
+        promptPassword(true);
     }
 
     public void joinGroup(View v){
@@ -91,10 +93,10 @@ public class Main extends Activity {
 
         //if group doesn't exist, or wrong password, return error
 
-        promptPassword();
+        promptPassword(false);
     }
 
-    public void promptPassword() {
+    public void promptPassword(boolean create) {
         final Activity context = this;
         LayoutInflater li = LayoutInflater.from(context);
         View promptsView = li.inflate(R.layout.enter_password, null);
