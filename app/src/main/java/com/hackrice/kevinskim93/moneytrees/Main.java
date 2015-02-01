@@ -67,6 +67,8 @@ public class Main extends ActionBarActivity {
         User u = new User(name, pNum);
         u.setAdmin(true);
 
+        mg.addUser(u);
+
         //adding to Firebase
         Firebase groupsRef = myFirebaseRef.child("groups");
         Map<String, MoneyGroup> groups = new HashMap<String, MoneyGroup>();

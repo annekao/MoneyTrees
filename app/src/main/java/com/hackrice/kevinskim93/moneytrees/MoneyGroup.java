@@ -11,6 +11,7 @@ public class MoneyGroup {
     public MoneyGroup(String n){
         name = n;
         money = 0;
+        users = new ArrayList<User>();
 
     }
 
