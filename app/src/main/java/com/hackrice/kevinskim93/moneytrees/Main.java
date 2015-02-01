@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -207,6 +208,7 @@ public class Main extends Activity {
             builder.setNegativeButton("Retry", null);
             builder.create().show();
         }
+        setTransactionList();
         setContentView(R.layout.activity);
         /*groups.put(groupName, moneyGroup);
         Firebase groupsRef = myFirebaseRef.child("groups");
@@ -269,7 +271,7 @@ public class Main extends Activity {
         Map<String, String> temp = new HashMap<String, String>();
         Firebase tempRef = myFirebaseRef.child("temp");
         tempRef.setValue(temp);
-
+        setTransactionList();
         setContentView(R.layout.admin_activity);
 
 
@@ -279,8 +281,57 @@ public class Main extends Activity {
         setContentView(R.layout.homepage);
     }
 
-    public void setTransactionList(View v){
-        ListView list = (ListView) findViewById(R.id.listView);
+    public void setTransactionList(){
+        Map<String, Object> tempMap = (Map<String,Object>)((Map<String, Object>) groups);
+        Object moneyGroupMap = tempMap.get(groupName);
+
+        if(moneyGroupMap instanceof MoneyGroup){
+
+
+        }
+
+        //not money group
+        else {
+
+            ListView list = (ListView) findViewById(R.id.listView);
+            List<String> transactionStrings = new ArrayList<String>();
+            List<Object> usersListMap = (ArrayList<Object>) ((Map<String, Object>) moneyGroupMap).get("users");
+            for (Object o : usersListMap) {
+                //User user2 = new User((String)((Map<String, Object>)u).get("name"),
+                //        (String)((Map<String, Object>)u).get("number") );
+                //User user2 = (User) user;
+
+
+                System.out.println(o.getClass());
+                System.out.println(o);
+
+                String s1 = "";
+                Double s2 = 0.0;
+
+                if(!(o instanceof User)){
+
+                    s1 = (String) ((Map<String, Object>) o).get("name");
+                     s2 = (Double) ((Map<String, Object>) o).get("money");
+
+                }
+
+                else{
+                     s1 = ((User) o).getName();
+                     s2 = ((User) o).getMoney();
+
+                }
+
+                transactionStrings.add(s1 + " contributed " +
+                        s2);
+
+            }
+            ArrayAdapter adapter = new ArrayAdapter<String>(this,
+                    R.layout.activity,
+                    transactionStrings);
+
+            list.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        }
     }
 
     public void addPayment(View v){
@@ -371,11 +422,13 @@ public class Main extends Activity {
                 System.out.println("The read failed: " + firebaseError.getMessage());
             }
         });
-
+        setTransactionList();
     }
 
     public void balance(View v){
         //compiles list of who to pay with option to venmo
+        ArrayList<String> iPay = new ArrayList<String>();
+        ArrayList<String> iGet = new ArrayList<String>();
 
         System.out.println(groupName);
 
@@ -413,10 +466,10 @@ public class Main extends Activity {
             ArrayList<Object> usersListMap = (ArrayList<Object>)((Map<String, Object>) moneyGroupMap).get("users");
 
             double disbursement = 0;
-            for(Object u : usersListMap){
-                //u is a map, use its data
+            for(Object o : usersListMap){
+                //o is a map, use its data
 
-                Double money = (Double)((Map<String, Object>)u).get("money");
+                Double money = (Double)((Map<String, Object>)o).get("money");
 
                 disbursement += money;
             }
@@ -428,11 +481,11 @@ public class Main extends Activity {
             Stack<User> oweMoneyUsers = new Stack<User>();
             Stack<User> needMoneyUsers = new Stack<User>();
 
-            for(Object u : usersListMap){
+            for(Object o : usersListMap){
 
-                User user = new User((String)((Map<String, Object>)u).get("name"),
-                                     (String)((Map<String, Object>)u).get("number") );
-                user.setMoney((Double)((Map<String, Object>)u).get("money"));
+                User user = new User((String)((Map<String, Object>)o).get("name"),
+                                     (String)((Map<String, Object>)o).get("number") );
+                user.setMoney((Double)((Map<String, Object>)o).get("money"));
 
                 user.addMoney(-disbursement);
 
