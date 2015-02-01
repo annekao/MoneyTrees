@@ -88,4 +88,13 @@
         android:layout_alignStart="@+id/groupName"
         android:layout_marginTop="27dp" />
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:src="@drawable/moneytreesbanner"
+        android:adjustViewBounds="true"
+        android:layout_alignParentTop="true"
+        android:cropToPadding="false" />
+
 </RelativeLayout>

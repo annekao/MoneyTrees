@@ -25,8 +25,10 @@ public class Main extends Activity {
     Firebase myFirebaseRef;
     Firebase groupsRef;
     String name, pNum, groupName;
+    Double billDouble;
     Object groups;
     User u;
+    boolean isNewUser = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +36,7 @@ public class Main extends Activity {
         Firebase.setAndroidContext(this);
         myFirebaseRef = new Firebase("https://luminous-inferno-581.firebaseio.com/");
         final Firebase groupsRef = myFirebaseRef.child("groups");
-        groups = new HashMap<String,MoneyGroup>();
+        groups = new HashMap<String,Object>();
 
         groupsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -119,7 +121,7 @@ public class Main extends Activity {
         groupsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                groups = (Map<String, MoneyGroup>) snapshot.getValue();
+                groups = (Map<String, Object>) snapshot.getValue();
                 System.out.println(snapshot.getValue().getClass() + "B");
             }
 
@@ -133,7 +135,7 @@ public class Main extends Activity {
         Firebase tempRef = myFirebaseRef.child("temp");
         tempRef.setValue(temp);
 
-        if (!((HashMap<String, MoneyGroup>) groups).containsKey(groupName)){
+        if (!((HashMap<String, Object>) groups).containsKey(groupName)){
             String message = "The group you have entered does not exist." + " \n \n" + "Please try again!";
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Error");
@@ -289,7 +291,41 @@ public class Main extends Activity {
 
         u.addMoney(amount);
 
-        Map<String, Object> tempMap = (Map<String, Object>) ((HashMap<String, Object>) groups).get(groupName);
+
+        Map<String, Object> tempMap = (Map<String,Object>)((Map<String, Object>) groups);
+
+        System.out.println(tempMap);
+
+        Object mg = (Object) tempMap.get(groupName);
+
+        if(mg.getClass().equals(tempMap.getClass())){
+
+            Map<String, Object> temporaryMap = (Map<String,Object>)((Map<String, Object>) tempMap.get(groupName));
+            String billString = ((Map<String, Object>) temporaryMap).get("money").toString();
+            System.out.println("temp map : " + temporaryMap);
+
+            isNewUser = true;
+
+            billDouble = amount;
+
+        }
+        else{
+
+            mg = (MoneyGroup) tempMap.get(groupName);
+            System.out.println("mg: " + mg);
+            System.out.println(((MoneyGroup) mg).getMoney());
+
+            isNewUser = false;
+
+            billDouble = amount;
+        }
+
+        System.out.println(mg);
+
+        //billDouble = mg.getMoney() + amount;
+
+
+
         final ArrayList<Object> userList = (ArrayList<Object>) tempMap.get("users");
 
         groupsRef = myFirebaseRef.child("groups");
@@ -298,7 +334,25 @@ public class Main extends Activity {
             public void onDataChange(DataSnapshot snapshot) {
 
                 ((Map<String, Object>) groups).put("users", ((Object) userList));
+
+                //((Map<String, Object>) groups).put("money", ((Object) billDouble).toString());
+                MoneyGroup mg = null;
+
+                if(!isNewUser) {
+                    mg = (MoneyGroup) ((Map<String, Object>) groups).get(groupName);
+                    mg.addMoney( billDouble );
+                }
+                else{
+
+                    Object tempMoneyMap = ((Map<String, Object>)groups).get(groupName);
+                    Double money = (Double) ((Map<String, Object>) tempMoneyMap).get("money");
+                    ((Map<String, Object>) tempMoneyMap).put("money", (Object) (money + billDouble));
+                }
+
+
                 groupsRef.setValue(groups);
+
+                isNewUser = false;
             }
 
             @Override
@@ -311,5 +365,9 @@ public class Main extends Activity {
 
     public void balance(View v){
         //compiles list of who to pay with option to venmo
+
+        
+
+
     }
 }
