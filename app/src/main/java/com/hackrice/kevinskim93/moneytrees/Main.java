@@ -26,6 +26,7 @@ public class Main extends Activity {
     Firebase groupsRef;
     String name, pNum, groupName;
     Object groups;
+    User u;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,7 +154,6 @@ public class Main extends Activity {
 
         Map<String, Object> tempMap = (Map<String, Object>) ((HashMap<String, Object>) groups).get(groupName);
 
-
         System.out.println(tempMap);
         System.out.println(tempMap.getClass());
         System.out.println(tempMap.get("password").getClass());
@@ -163,7 +163,7 @@ public class Main extends Activity {
         String userPW = userInput.getText().toString();
 
         if (actualPW.equals(userPW)) {
-            User u = new User(name, pNum);
+            u = new User(name, pNum);
 
             System.out.println("JOINED");
 
@@ -239,7 +239,7 @@ public class Main extends Activity {
     public void addToDB(String pw) {
         //create group
         final MoneyGroup mg = new MoneyGroup(groupName);
-        User u = new User(name, pNum);
+        u = new User(name, pNum);
 
         u.setNumber(pNum);
         u.setAdmin(true);
@@ -286,6 +286,26 @@ public class Main extends Activity {
         //refresh list
         EditText amntText = (EditText) findViewById(R.id.amountPaid);
         Double amount = Double.parseDouble(amntText.getText().toString());
+
+        u.addMoney(amount);
+
+        Map<String, Object> tempMap = (Map<String, Object>) ((HashMap<String, Object>) groups).get(groupName);
+        final ArrayList<Object> userList = (ArrayList<Object>) tempMap.get("users");
+
+        groupsRef = myFirebaseRef.child("groups");
+        groupsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+
+                ((Map<String, Object>) groups).put("users", ((Object) userList));
+                groupsRef.setValue(groups);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                System.out.println("The read failed: " + firebaseError.getMessage());
+            }
+        });
 
     }
 
