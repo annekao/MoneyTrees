@@ -44,4 +44,12 @@
         android:layout_toStartOf="@+id/amountPaid"
         android:layout_alignTop="@+id/amountPaid" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Balance"
+        android:id="@+id/balance"
+        android:layout_below="@+id/add"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>
