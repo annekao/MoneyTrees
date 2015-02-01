@@ -22,16 +22,38 @@ import java.util.*;
 
 public class Main extends Activity {
     Firebase myFirebaseRef;
+    Firebase groupsRef;
     String name, pNum, groupName;
-    HashMap<String, MoneyGroup> groups = new HashMap<String, MoneyGroup>();
+    Object groups;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Firebase.setAndroidContext(this);
         myFirebaseRef = new Firebase("https://luminous-inferno-581.firebaseio.com/");
+        Firebase groupsRef = myFirebaseRef.child("groups");
+        groups = new HashMap<String,MoneyGroup>();
+        groupsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                groups = (Map<String, MoneyGroup>) snapshot.getValue();
+                System.out.println("initial read");
+                System.out.println(snapshot.getValue().getClass() + "A");
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                System.out.println("The read failed: " + firebaseError.getMessage());
+            }
+        });
+
+        Map<String, String> temp = new HashMap<String, String>();
+        Firebase tempRef = myFirebaseRef.child("temp");
+        tempRef.setValue(temp);
+
         setContentView(R.layout.homepage);
     }
+
 
 
     @Override
@@ -91,7 +113,8 @@ public class Main extends Activity {
         groupsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                groups = (HashMap<String, MoneyGroup>) snapshot.getValue();
+                groups = (Map<String, MoneyGroup>) snapshot.getValue();
+                System.out.println(snapshot.getValue().getClass() + "B");
             }
 
             @Override
@@ -100,7 +123,11 @@ public class Main extends Activity {
             }
         });
 
-        if (!groups.containsKey(groupName)){
+        Map<String, String> temp = new HashMap<String, String>();
+        Firebase tempRef = myFirebaseRef.child("temp");
+        tempRef.setValue(temp);
+
+        if (!((HashMap<String, MoneyGroup>) groups).containsKey(groupName)){
             String message = "The group you have entered does not exist." + " \n \n" + "Please try again!";
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Error");
@@ -117,15 +144,23 @@ public class Main extends Activity {
     }
 
     public void enterPassword(View v) {
-        MoneyGroup moneyGroup =  groups.get(groupName);
 
-        String actualPW = moneyGroup.getPassword();
+
+        Map<String, Object> tempMap = (Map<String, Object>) ((HashMap<String, Object>) groups).get(groupName);
+
+
+        System.out.println(tempMap);
+        System.out.println(tempMap.getClass());
+        System.out.println(tempMap.get("password").getClass());
+
+        String actualPW = ((Map<String, Object>) tempMap).get("password").toString();
         EditText userInput = (EditText) findViewById(R.id.password);
         String userPW = userInput.getText().toString();
 
         if (actualPW.equals(userPW)) {
             User u = new User(name, pNum);
-            moneyGroup.addUser(u);
+            System.out.println("JOINED");
+            //moneyGroup.addUser(u);
         }
         else {
             System.out.println(userInput.getText().toString());
@@ -143,9 +178,9 @@ public class Main extends Activity {
             builder.create().show();
         }
 
-        groups.put(groupName, moneyGroup);
+        /*groups.put(groupName, moneyGroup);
         Firebase groupsRef = myFirebaseRef.child("groups");
-        groupsRef.setValue(groups);
+        groupsRef.setValue(groups);*/
     }
 
     public void createPassword(View v) {
@@ -175,18 +210,22 @@ public class Main extends Activity {
 
     public void addToDB(String pw) {
         //create group
-        MoneyGroup mg = new MoneyGroup(groupName);
+        final MoneyGroup mg = new MoneyGroup(groupName);
         User u = new User(name, pNum);
         u.setAdmin(true);
         mg.addUser(u);
         mg.setPassword(pw);
 
         //adding to Firebase
-        Firebase groupsRef = myFirebaseRef.child("groups");
+        groupsRef = myFirebaseRef.child("groups");
         groupsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                groups = (HashMap<String, MoneyGroup>) snapshot.getValue();
+                groups = (Map<String, MoneyGroup>) snapshot.getValue();
+                ((Map<String, MoneyGroup>) groups).put(groupName, mg);
+                groupsRef.setValue(groups);
+
+                System.out.println(snapshot.getValue().getClass() + "C");
             }
 
             @Override
@@ -195,8 +234,11 @@ public class Main extends Activity {
             }
         });
 
-        groups.put(groupName, mg);
-        groupsRef.setValue(groups);
+        Map<String, String> temp = new HashMap<String, String>();
+        Firebase tempRef = myFirebaseRef.child("temp");
+        tempRef.setValue(temp);
+
+
     }
 
     public void back(View v) {
