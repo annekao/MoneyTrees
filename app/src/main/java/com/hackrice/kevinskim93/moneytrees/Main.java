@@ -31,14 +31,18 @@ public class Main extends Activity {
         super.onCreate(savedInstanceState);
         Firebase.setAndroidContext(this);
         myFirebaseRef = new Firebase("https://luminous-inferno-581.firebaseio.com/");
-        Firebase groupsRef = myFirebaseRef.child("groups");
+        final Firebase groupsRef = myFirebaseRef.child("groups");
         groups = new HashMap<String,MoneyGroup>();
+
         groupsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                groups = (Map<String, MoneyGroup>) snapshot.getValue();
+                groups = (Map<String, Object>) snapshot.getValue();
                 System.out.println("initial read");
-                System.out.println(snapshot.getValue().getClass() + "A");
+                if(groups == null){
+                    groupsRef.setValue("groups", null);
+                }
+                //System.out.println(snapshot.getValue().getClass() + "A");
             }
 
             @Override
@@ -235,6 +239,8 @@ public class Main extends Activity {
         //create group
         final MoneyGroup mg = new MoneyGroup(groupName);
         User u = new User(name, pNum);
+
+        u.setNumber(pNum);
         u.setAdmin(true);
         mg.addUser(u);
         mg.setPassword(pw);
@@ -244,8 +250,8 @@ public class Main extends Activity {
         groupsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                groups = (Map<String, MoneyGroup>) snapshot.getValue();
-                ((Map<String, MoneyGroup>) groups).put(groupName, mg);
+                groups = (Map<String, Object>) snapshot.getValue();
+                ((Map<String, Object>) groups).put(groupName, mg);
                 groupsRef.setValue(groups);
 
                 System.out.println(snapshot.getValue().getClass() + "C");

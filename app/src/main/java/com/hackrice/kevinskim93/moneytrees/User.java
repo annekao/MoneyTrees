@@ -4,9 +4,10 @@ package com.hackrice.kevinskim93.moneytrees;
 public class User {
 
     private double money;
+    private String phone;
     private String name;
     private boolean admin;
-    private String phone;
+
 
     public User(String n, String p){
         name = n;
@@ -19,6 +20,14 @@ public class User {
         //admins have the ability to "balance" the transactions
         //all other users can only submit their personal transactions for the group
         admin = b;
+    }
+
+    public void setNumber(String s){
+        phone = s;
+    }
+
+    public String getNumber(){
+        return phone;
     }
 
     public double getMoney(){
