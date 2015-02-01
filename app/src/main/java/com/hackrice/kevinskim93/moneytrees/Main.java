@@ -88,8 +88,7 @@ public class Main extends Activity {
         myFirebaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-
-                System.out.println(snapshot.getValue().getClass());
+                groups = (HashMap<String, MoneyGroup>) snapshot.getValue();
             }
 
             @Override
@@ -97,11 +96,27 @@ public class Main extends Activity {
                 System.out.println("The read failed: " + firebaseError.getMessage());
             }
         });
-
+        MoneyGroup moneyGroup = groups.get(groupName);
+        if (moneyGroup == null){
+            String message = "The group you have entered does not exist." + " \n \n" + "Please try again!";
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Error");
+            builder.setMessage(message);
+            builder.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int id) {
+                    setContentView(R.layout.homepage);
+                }
+            });
+            builder.create().show();
+        }
+        String actualPW = moneyGroup.getPassword();
         EditText userInput = (EditText) findViewById(R.id.password);
+        String userPW = userInput.getText().toString();
 
-        if (userInput.getText().toString().equals("pw")) {
-            System.out.println(userInput.getText().toString());
+        if (actualPW.equals(userPW)) {
+            System.out.println(actualPW);
+            // TODO: add user
         } else {
             System.out.println(userInput.getText().toString());
             String message = "The password you have entered is incorrect." + " \n \n" + "Please try again!";
@@ -125,6 +140,7 @@ public class Main extends Activity {
         String groupPW = "";
         if (userInput.getText().toString().equals(confUserInput.getText().toString())) {
             groupPW = userInput.getText().toString();
+            addToDB(groupPW);
         } else {
             System.out.println(userInput.getText().toString());
             String message = "The password you've entered do not match." + " \n \n" + "Please try again!";
@@ -140,8 +156,6 @@ public class Main extends Activity {
             builder.setNegativeButton("Retry", null);
             builder.create().show();
         }
-
-        addToDB(groupPW);
     }
 
     public void addToDB(String pw) {
