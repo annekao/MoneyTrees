@@ -21,7 +21,8 @@
         android:layout_marginStart="41dp"
         android:layout_above="@+id/balance"
         android:layout_alignLeft="@+id/balance"
-        android:layout_alignStart="@+id/balance" />
+        android:layout_alignStart="@+id/balance"
+        android:onClick="addPayment"/>
 
     <EditText
         android:layout_width="75dp"
@@ -52,6 +53,7 @@
         android:text="Balance"
         android:id="@+id/balance"
         android:layout_below="@+id/amountPaid"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:onClick="balance"/>
 
 </RelativeLayout>

@@ -20,7 +20,8 @@
         android:layout_marginTop="36dp"
         android:layout_below="@+id/listView"
         android:layout_toRightOf="@+id/amountPaid"
-        android:layout_toEndOf="@+id/amountPaid" />
+        android:layout_toEndOf="@+id/amountPaid"
+        android:onClick="addPayment"/>
 
     <EditText
         android:layout_width="75dp"

@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ListView;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -268,5 +269,21 @@ public class Main extends Activity {
 
     public void back(View v) {
         setContentView(R.layout.homepage);
+    }
+
+    public void setTransactionList(View v){
+        ListView list = (ListView) findViewById(R.id.listView);
+    }
+
+    public void addPayment(View v){
+        //add user's transaction into the database
+        //refresh list
+        EditText amntText = (EditText) findViewById(R.id.amountPaid);
+        Double amount = Double.parseDouble(amntText.getText().toString());
+
+    }
+
+    public void balance(View v){
+        //compiles list of who to pay with option to venmo
     }
 }
