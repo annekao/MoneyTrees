@@ -9,6 +9,7 @@ import android.widget.EditText;
 
 import com.firebase.client.Firebase;
 
+import java.util.*;
 
 public class Main extends ActionBarActivity {
 
@@ -62,13 +63,17 @@ public class Main extends ActionBarActivity {
         //if group already exists, return error
 
         //create group
-       // MoneyGroup mg = new MoneyGroup(groupName);
+        MoneyGroup mg = new MoneyGroup(groupName);
         User u = new User(name, pNum);
         u.setAdmin(true);
 
         //adding to Firebase
         Firebase groupsRef = myFirebaseRef.child("groups");
-       // Map<String, Mo>
+        Map<String, MoneyGroup> groups = new HashMap<String, MoneyGroup>();
+
+        groups.put(groupName, mg);
+
+        groupsRef.setValue(groups);
     }
 
     public void joinGroup(View v){
